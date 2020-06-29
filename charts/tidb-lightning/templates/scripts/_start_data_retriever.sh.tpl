@@ -4,11 +4,11 @@ set -euo pipefail
 rclone --config /etc/rclone/rclone.conf sync -P {{ .Values.dataSource.remote.directory}} /data
 {{- else -}}
 filename=$(basename {{ .Values.dataSource.remote.path }})
-if find /data -name metadata | egrep '.*'; then
+if find /data -name metadata | grep -q .; then
     echo "data already exist"
     exit 0
 else
     rclone --config /etc/rclone/rclone.conf copy -P {{ .Values.dataSource.remote.path }} /data
-    cd /data && tar xzvf ${filename}
+    cd /data && tar xvf "$filename"
 fi
 {{- end -}}
